@@ -13,16 +13,20 @@ public class UserDao {
             "INSERT INTO users(username, email, password) " +
                     "VALUES (?, ?, ?)";
 
+    //zapytanie wyszukujące użytkownika o podanym id
     private static final String READ_USER_QUERY =
             "SELECT * FROM users WHERE id = ?";
 
+    //zapytanie wypisujące wszystkich uzytkoników w bazie
     private static final String FIND_ALL_USER_QUERY =
             "SELECT * FROM users";
 
+    //zapytanie uaktualniające użytkownika w bazie
     private static final String UPDATE_USER_QUERY =
             "UPDATE users SET email = ?, username = ?, password = ?" +
                     "WHERE id = ?";
 
+    //zapytanie usówające uzytkownika o podanym id z bazy
     private static final String DELETE_USER_QUERY =
             "DELETE FROM users WHERE id=?";
 
@@ -57,49 +61,14 @@ public class UserDao {
         }
     }
 
-    //    public User read(int userId) {
-//        User user = new User();
-//
-//        try (Connection conn = DbUtil.getConnection()) {
-//            PreparedStatement preparedStatement = conn.prepareStatement(READ_USER_QUERY);
-//            preparedStatement.setInt(1,userId);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//
-//            System.out.println(resultSet.getInt(1,));
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return user;
-//    }
-//    public User read(int userId) {
-//        String[] columnNames = {"id","email","username","password"};
-//        User user = new User();
-//        try (Connection conn = DbUtil.getConnection()) {
-//            PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
-//            statement.setInt(1,userId);
-//            ResultSet resultSet = statement.executeQuery(); {
-//                while (resultSet.next()) {
-//                    user.setPassword(resultSet.getString());
-//                    for (String columnName : columnNames) {
-//                        System.out.println(resultSet.getString(columnName));
-//
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return new User();
-//    }
-
     public User read(int userId) {
 
         User user = new User();
         try (Connection conn = DbUtil.getConnection()) {
+            //Wyszukiwanie o podanym id (mozna podac coś innego tylko trzeba dodac nowe query)================
             PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
             statement.setInt(1, userId);
+            //====================================================================
             ResultSet resultSet = statement.executeQuery();
             {
                 if (resultSet.next()) {
@@ -144,24 +113,22 @@ public class UserDao {
     public User[] findAll() {
         User[] users = new User[0];
         try (Connection conn = DbUtil.getConnection()) {
-            try (Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(FIND_ALL_USER_QUERY)) {
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String email = resultSet.getString("email");
-                    String username = resultSet.getString("username");
-                    String password = resultSet.getString("password");
-                    User user = new User(id, username, email, password);
-                    users = addToArray(user, users);
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(FIND_ALL_USER_QUERY);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String email = resultSet.getString("email");
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                User user = new User(id, username, email, password);
+                users = addToArray(user, users);
             }
+            return users;
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return users;
     }
 
     private User[] addToArray(User u, User[] users) {

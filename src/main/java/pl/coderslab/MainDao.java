@@ -3,7 +3,6 @@ package pl.coderslab;
 import pl.coderslab.entity.User;
 import pl.coderslab.entity.UserDao;
 
-import java.util.Arrays;
 
 public class MainDao {
     public static void main(String[] args) {
@@ -23,16 +22,34 @@ public class MainDao {
         user2.setPassword("12345");
 
         UserDao userDao = new UserDao();
+//        =============================
+//        Tworzenie obiektów klasy user
+//        =============================
 //        userDao.create(user);
 //        userDao.create(user1);
 //        userDao.create(user2);
-        System.out.println(Arrays.toString(userDao.findAll()));
+//        -----------------------------
 
-        //userDao.update(new User(2, "Dominikos@yahoo.com", "Domino", "qwerty123"));
+        System.out.println("========Tablica Tabeli users==============");
+        User[] users = userDao.findAll();
+        for (User userEntity : users) {
+            System.out.println(userEntity);
+        }
 
-        //userDao.delete(1);
-        //System.out.println(Arrays.toString(userDao.findAll()));
+//        ===========================
+//        Update pola w bazie danych
+//        ===========================
+//        userDao.update(new User(2, "Dominikos@yahoo.com", "Domino", "qwerty123"));
+//        ---------------------------
 
+//        ========================================
+//        Usówanie krotki bazy danych o podanym id
+//        ========================================
+//        userDao.delete(1);
+//        ----------------------------------------
+
+        System.out.println();
+        System.out.println("========metoda read()=========");
         System.out.println(userDao.read(1));
     }
 }
