@@ -12,8 +12,20 @@ public class UserDao {
     private static final String CREATE_USER_QUERY =
             "INSERT INTO users(username, email, password) " +
                     "VALUES (?, ?, ?)";
+
+    private static final String READ_USER_QUERY =
+            "SELECT * FROM users WHERE id = ?";
+
     private static final String FIND_ALL_USER_QUERY =
             "SELECT * FROM users";
+
+    private static final String UPDATE_USER_QUERY =
+            "UPDATE users SET email = ?, username = ?, password = ?" +
+                    "WHERE id = ?";
+
+    private static final String DELETE_USER_QUERY =
+            "DELETE FROM users WHERE id=?";
+
 
     public String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
@@ -45,12 +57,87 @@ public class UserDao {
         }
     }
 
-    // public User read(int userId) {}
+    //    public User read(int userId) {
+//        User user = new User();
+//
+//        try (Connection conn = DbUtil.getConnection()) {
+//            PreparedStatement preparedStatement = conn.prepareStatement(READ_USER_QUERY);
+//            preparedStatement.setInt(1,userId);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//            System.out.println(resultSet.getInt(1,));
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return user;
+//    }
+//    public User read(int userId) {
+//        String[] columnNames = {"id","email","username","password"};
+//        User user = new User();
+//        try (Connection conn = DbUtil.getConnection()) {
+//            PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
+//            statement.setInt(1,userId);
+//            ResultSet resultSet = statement.executeQuery(); {
+//                while (resultSet.next()) {
+//                    user.setPassword(resultSet.getString());
+//                    for (String columnName : columnNames) {
+//                        System.out.println(resultSet.getString(columnName));
+//
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return new User();
+//    }
+
+    public User read(int userId) {
+
+        User user = new User();
+        try (Connection conn = DbUtil.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            {
+                if (resultSet.next()) {
+                    user.setId(resultSet.getInt("id"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setUserName(resultSet.getString("username"));
+                    user.setPassword(resultSet.getString("password"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void update(User user) {
+        try (Connection conn = DbUtil.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_USER_QUERY);
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getUserName());
+            preparedStatement.setString(3, hashPassword(user.getPassword()));
+            preparedStatement.setLong(4, user.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void delete(int userId) {
+        try (Connection conn = DbUtil.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_USER_QUERY);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -64,8 +151,8 @@ public class UserDao {
                     String email = resultSet.getString("email");
                     String username = resultSet.getString("username");
                     String password = resultSet.getString("password");
-                    User user  = new User(id,username,email,password);
-                    users = addToArray(user,users);
+                    User user = new User(id, username, email, password);
+                    users = addToArray(user, users);
 
                 }
             } catch (Exception e) {
@@ -73,7 +160,8 @@ public class UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }return users;
+        }
+        return users;
     }
 
     private User[] addToArray(User u, User[] users) {
@@ -81,7 +169,6 @@ public class UserDao {
         tmpUsers[users.length] = u; // Dodajemy obiekt na ostatniej pozycji.
         return tmpUsers; // Zwracamy nową tablicę.
     }
-
 
 
 }
