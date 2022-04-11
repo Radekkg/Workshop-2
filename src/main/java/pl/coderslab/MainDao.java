@@ -39,7 +39,8 @@ public class MainDao {
 //        ===========================
 //        Update pola w bazie danych
 //        ===========================
-//        userDao.update(new User(2, "Dominikos@yahoo.com", "Domino", "qwerty123"));
+//        userDao.update(new User(2, "Domino", "Dominikos@yahoo.com", "qwerty123"));
+//        userDao.update(new User(1,"Laurita","Laurita@yahoo.com","haslo123"));
 //        ---------------------------
 
 //        ========================================

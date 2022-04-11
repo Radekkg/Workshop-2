@@ -23,7 +23,7 @@ public class UserDao {
 
     //zapytanie uaktualniające użytkownika w bazie
     private static final String UPDATE_USER_QUERY =
-            "UPDATE users SET email = ?, username = ?, password = ?" +
+            "UPDATE users SET username = ?, email = ?, password = ?" +
                     "WHERE id = ?";
 
     //zapytanie usówające uzytkownika o podanym id z bazy
@@ -65,7 +65,7 @@ public class UserDao {
 
         User user = new User();
         try (Connection conn = DbUtil.getConnection()) {
-            //Wyszukiwanie o podanym id (mozna podac coś innego tylko trzeba dodac nowe query)================
+            //Wyszukiwanie o podanym id (mozna podac coś innego tylko trzeba dodac nowe query)=================================
             PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
             statement.setInt(1, userId);
             //====================================================================
@@ -88,8 +88,8 @@ public class UserDao {
     public void update(User user) {
         try (Connection conn = DbUtil.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_USER_QUERY);
-            preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getUserName());
+            preparedStatement.setString(1, user.getUserName());
+            preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, hashPassword(user.getPassword()));
             preparedStatement.setLong(4, user.getId());
             preparedStatement.executeUpdate();
